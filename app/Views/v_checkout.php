@@ -31,7 +31,7 @@
         </div>
         <div class="col-12">
             <label for="layanan" class="form-label">Layanan</label>
-            <select class="form-select" id="layanan">
+            <select class="form-select" id="service">
                 <option>Silakan pilih layanan</option>
             </select>
         </div>
@@ -111,12 +111,12 @@
                 },
                 dataType: 'json',
                 success: function(data) {
-                    //console.log(data);
+                    console.log(data);
                     var results = data["rajaongkir"]["results"];
                     for (var i = 0; i < results.length; i++) {
                         $("#kabupaten").append($('<option>', {
                             value: results[i]["city_id"],
-                            text: results[i]['city_name'] + " " + results[i]['city_name']
+                            text: results[i]['type'] + " " + results[i]['city_name']
                         }));
                     }
                     hitungTotal();
