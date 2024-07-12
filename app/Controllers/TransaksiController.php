@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Models\TransactionDetailModel;
 use App\Models\TransactionModel;
+use Dompdf\Dompdf;
 
 class TransaksiController extends BaseController
 {
@@ -22,6 +23,7 @@ class TransaksiController extends BaseController
         $this->transaction_detail = new TransactionDetailModel();
     }
 
+    // Keranjang
     public function index()
     {
         $data['items'] = $this->cart->contents();
@@ -195,5 +197,49 @@ class TransaksiController extends BaseController
 
             return redirect()->to(base_url('profile'));
         }
+    }
+
+    // Transaksi
+    // Keranjang
+    public function view_transaksi()
+    {
+        $data['transaction'] = $this->transaction->findAll();
+        return view('v_transaksi', $data);
+    }
+
+    public function edit_status($id)
+    {
+        $dataForm = [
+            'status' => $this->request->getPost('status'),
+            'updated_at' => date("Y-m-d H:i:s")
+        ];
+
+        $this->transaction->update($id, $dataForm);
+
+        return redirect('transaksi')->with('success', 'Data Berhasil Diubah');
+    }
+
+    public function download()
+    {
+        $transaction = $this->transaction->findAll();
+
+        $html = view('v_transaksiPDF', ['transaction' => $transaction]);
+
+        $filename = date('y-m-d-H-i-s') . '-transaction';
+
+        // instantiate and use the dompdf class
+        $dompdf = new Dompdf();
+
+        // load HTML content
+        $dompdf->loadHtml($html);
+
+        // (optional) setup the paper size and orientation
+        $dompdf->setPaper('A4', 'potrait');
+
+        // render html as PDF
+        $dompdf->render();
+
+        // output the generated pdf
+        $dompdf->stream($filename);
     }
 }
